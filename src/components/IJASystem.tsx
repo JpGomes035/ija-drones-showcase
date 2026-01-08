@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { 
   Shield, 
   Users, 
@@ -42,46 +44,100 @@ const features = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+    },
+  },
+};
+
 const IJASystem = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
+
   return (
     <section id="ijasystem" className="relative py-24 md:py-32 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-dots-pattern opacity-30" />
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
       
-      {/* Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
+      {/* Animated Glow */}
+      <motion.div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl"
+        animate={{
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
 
-      <div className="container relative mx-auto px-4 md:px-6">
+      <div className="container relative mx-auto px-4 md:px-6" ref={ref}>
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/30 mb-6">
-            <Zap className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-accent">Nosso Principal Produto</span>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="max-w-3xl mx-auto text-center mb-16"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 mb-6 neon-border">
+            <Zap className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-primary">Nosso Principal Produto</span>
           </div>
           
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
             Conheça o{' '}
-            <span className="text-gradient-primary">IJASystem</span>
+            <span className="text-gradient-primary neon-text">IJASystem</span>
           </h2>
           
           <p className="text-lg text-muted-foreground">
             Sistema completo de Gestão de Solicitações de Voo desenvolvido para 
             otimizar operações com drones, garantindo agilidade, precisão e conformidade regulatória.
           </p>
-        </div>
+        </motion.div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {features.map((feature, index) => (
-            <div
+            <motion.div
               key={index}
+              variants={itemVariants}
+              whileHover={{ 
+                scale: 1.02,
+                transition: { duration: 0.2 }
+              }}
               className="group glass-card p-6 border-gradient hover:bg-card/80 transition-all duration-300"
-              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-4 group-hover:bg-primary/20 group-hover:glow-effect transition-all duration-300">
+              <motion.div
+                className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all duration-300"
+                whileHover={{
+                  boxShadow: '0 0 30px hsl(210 100% 55% / 0.5)',
+                }}
+              >
                 <feature.icon className="w-6 h-6 text-primary" />
-              </div>
+              </motion.div>
               
               <h3 className="font-display text-lg font-semibold mb-2 text-foreground">
                 {feature.title}
@@ -90,17 +146,22 @@ const IJASystem = () => {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {feature.description}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Highlight Box */}
-        <div className="mt-16 glass-card p-8 md:p-12 border-gradient">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="mt-16 glass-card p-8 md:p-12 border-gradient neon-border"
+        >
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
               <h3 className="font-display text-2xl md:text-3xl font-bold mb-4">
                 ChatBot Integrado para{' '}
-                <span className="text-gradient-accent">Suporte Inteligente</span>
+                <span className="text-gradient-primary">Suporte Inteligente</span>
               </h3>
               <p className="text-muted-foreground mb-6">
                 Assistente virtual disponível para tirar dúvidas sobre status, checklist, 
@@ -109,29 +170,61 @@ const IJASystem = () => {
               
               <ul className="space-y-3">
                 {['Respostas instantâneas', 'Integração completa', 'Suporte 24/7', 'Redução de erros'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm">
+                  <motion.li
+                    key={i}
+                    className="flex items-center gap-3 text-sm"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ delay: 0.5 + i * 0.1 }}
+                  >
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
                     <span className="text-foreground">{item}</span>
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
             </div>
             
             <div className="relative">
-              <div className="aspect-video rounded-xl bg-secondary/50 border border-border/50 overflow-hidden flex items-center justify-center">
+              <motion.div
+                className="aspect-video rounded-xl bg-secondary/50 border border-border/50 overflow-hidden flex items-center justify-center"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+              >
                 <div className="text-center p-8">
-                  <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
+                  <motion.div
+                    className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center mx-auto mb-4"
+                    animate={{
+                      boxShadow: [
+                        '0 0 20px hsl(210 100% 55% / 0.3)',
+                        '0 0 50px hsl(210 100% 55% / 0.6)',
+                        '0 0 20px hsl(210 100% 55% / 0.3)',
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                    }}
+                  >
                     <Shield className="w-8 h-8 text-primary" />
-                  </div>
+                  </motion.div>
                   <p className="text-sm text-muted-foreground">Interface IJASystem</p>
                 </div>
-              </div>
+              </motion.div>
               {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-accent/10 rounded-full blur-2xl" />
+              <motion.div
+                className="absolute -top-4 -right-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl"
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [0.3, 0.5, 0.3],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                }}
+              />
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
